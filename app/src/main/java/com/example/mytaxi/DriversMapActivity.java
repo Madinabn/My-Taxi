@@ -223,7 +223,7 @@ public class DriversMapActivity extends FragmentActivity implements OnMapReadyCa
                     LatLng DriverLatLng = new LatLng(locationLat, locationLng);
                     PickUpMarker = mMap.addMarker(new MarkerOptions().position(DriverLatLng).title("Забрать клиента тут").icon(BitmapDescriptorFactory.fromResource(R.drawable.user)));
                     mMap.moveCamera(CameraUpdateFactory.newLatLng(DriverLatLng));
-                    mMap.animateCamera(CameraUpdateFactory.zoomTo(11));
+                    mMap.animateCamera(CameraUpdateFactory.zoomTo(15));
                 }
             }
 
@@ -278,7 +278,7 @@ public class DriversMapActivity extends FragmentActivity implements OnMapReadyCa
 
             LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
             mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
-            mMap.animateCamera(CameraUpdateFactory.zoomTo(12));
+            mMap.animateCamera(CameraUpdateFactory.zoomTo(15));
 
             String userID = FirebaseAuth.getInstance().getCurrentUser().getUid();
             DatabaseReference DriverAvalablityRef = FirebaseDatabase.getInstance().getReference().child("Driver Available");

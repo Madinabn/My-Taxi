@@ -56,6 +56,7 @@ public class CustomerRegLoginActivity extends AppCompatActivity {
             public void onClick(View v) {
                 signInBtn.setVisibility(View.INVISIBLE);
                 question.setVisibility(View.INVISIBLE);
+                tvyetcus.setVisibility(View.INVISIBLE);
                 signUpBtn.setVisibility(View.VISIBLE);
                 signUpBtn.setEnabled(true);
                 customerStatus.setText("Регистрация для клиентов");
@@ -140,5 +141,4 @@ public class CustomerRegLoginActivity extends AppCompatActivity {
             }
         });
     }
-    //first;kjds
 }

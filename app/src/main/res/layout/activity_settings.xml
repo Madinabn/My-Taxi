@@ -33,11 +33,10 @@
                     android:id="@+id/save_button"
                     android:layout_width="35dp"
                     android:layout_height="45dp"
-                    android:src="@drawable/ic_save"
-                    android:tint="@android:color/white"
                     android:layout_alignParentEnd="true"
                     android:layout_marginRight="15dp"
-                    />
+                    android:src="@drawable/ic_save"
+                    android:tint="@android:color/white" />
 
             </RelativeLayout>
 
