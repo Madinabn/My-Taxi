@@ -106,6 +106,7 @@ public class DriversMapActivity extends FragmentActivity implements OnMapReadyCa
             }
         });
 
+        //выход из аккаунта
         LogoutDriverButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -120,6 +121,8 @@ public class DriversMapActivity extends FragmentActivity implements OnMapReadyCa
         getAssignedCustomerRequest();
     }
 
+
+    //получение назначенного клиента
     private void getAssignedCustomerRequest() {
         assignedCustomerRef = FirebaseDatabase.getInstance().getReference()
                 .child("Users").child("Drivers").child(driverID).child("CustomerRideID");
@@ -129,7 +132,7 @@ public class DriversMapActivity extends FragmentActivity implements OnMapReadyCa
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if(dataSnapshot.exists())
                 {
-                    customerID = dataSnapshot.getValue().toString();
+                    customerID = dataSnapshot.getValue().toString();//получить id клиента
 
                     getAssignedCustomerPosition();
                     sound.start();
@@ -158,6 +161,7 @@ public class DriversMapActivity extends FragmentActivity implements OnMapReadyCa
         });
     }
 
+    //вывод на экран инф-ю клиента
     private void getAssignedCustomerInformation() {
         relativeLayout.setVisibility(View.VISIBLE);
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference()
@@ -176,6 +180,7 @@ public class DriversMapActivity extends FragmentActivity implements OnMapReadyCa
                     txtName.setText(name);
                     txtPhone.setText(phone);
 
+                    //звонок клиенту
                     callCustomer.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
@@ -207,6 +212,7 @@ public class DriversMapActivity extends FragmentActivity implements OnMapReadyCa
         });
     }
 
+    //получении гео клиента
     private void getAssignedCustomerPosition() {
         AssignedCustomerPositionRef = FirebaseDatabase.getInstance().getReference().child("Customers Requests")
                 .child(customerID).child("l");
@@ -223,7 +229,7 @@ public class DriversMapActivity extends FragmentActivity implements OnMapReadyCa
                     LatLng DriverLatLng = new LatLng(locationLat, locationLng);
                     PickUpMarker = mMap.addMarker(new MarkerOptions().position(DriverLatLng).title("Забрать клиента тут").icon(BitmapDescriptorFactory.fromResource(R.drawable.user)));
                     mMap.moveCamera(CameraUpdateFactory.newLatLng(DriverLatLng));
-                    mMap.animateCamera(CameraUpdateFactory.zoomTo(15));
+                    mMap.animateCamera(CameraUpdateFactory.zoomTo(11));
                 }
             }
 
@@ -234,7 +240,7 @@ public class DriversMapActivity extends FragmentActivity implements OnMapReadyCa
         });
     }
 
-
+//при запуске показываем гео водителя
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
@@ -246,7 +252,7 @@ public class DriversMapActivity extends FragmentActivity implements OnMapReadyCa
         mMap.setMyLocationEnabled(true);
 
     }
-
+//запрос местоположения
     @Override
     public void onConnected(@Nullable Bundle bundle) {
         locationRequest = new LocationRequest();
@@ -270,30 +276,37 @@ public class DriversMapActivity extends FragmentActivity implements OnMapReadyCa
 
     }
 
+
+    //отправка данных гео в firebase
     @Override
     public void onLocationChanged(Location location)
     {
         if(getApplicationContext() != null){
             lastLocation = location;
 
+            //широта и долгота
             LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
             mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
-            mMap.animateCamera(CameraUpdateFactory.zoomTo(15));
+            mMap.animateCamera(CameraUpdateFactory.zoomTo(15));//уровень зума
 
+            //id для водителя в firebase
+            //полученных данных из firebase
             String userID = FirebaseAuth.getInstance().getCurrentUser().getUid();
-            DatabaseReference DriverAvalablityRef = FirebaseDatabase.getInstance().getReference().child("Driver Available");
+            DatabaseReference DriverAvalablityRef = FirebaseDatabase.getInstance().getReference().child("Driver Available"); //доступные водители
             GeoFire geoFireAvailablity = new GeoFire(DriverAvalablityRef);
 
-            DatabaseReference DriverWorkingRef = FirebaseDatabase.getInstance().getReference().child("Driver Working");
+            DatabaseReference DriverWorkingRef = FirebaseDatabase.getInstance().getReference().child("Driver Working"); //занятые водители
             GeoFire geoFireWorking = new GeoFire(DriverWorkingRef);
 
 
             switch (customerID)
             {
+                //показывает доступных водителей клиенту
                 case "":
                     geoFireWorking.removeLocation(userID);
                     geoFireAvailablity.setLocation(userID, new GeoLocation(location.getLatitude(), location.getLongitude()));
                     break;
+                 //по умолчанию показывает занятых водителей
                 default:
                     geoFireAvailablity.removeLocation(userID);
                     geoFireWorking.setLocation(userID, new GeoLocation(location.getLatitude(), location.getLongitude()));
@@ -303,6 +316,8 @@ public class DriversMapActivity extends FragmentActivity implements OnMapReadyCa
 
     }
 
+
+// связка с googleapi
     protected synchronized void buildGoogleApiClient()
     {
         googleApiClient = new GoogleApiClient.Builder(this)
@@ -314,6 +329,7 @@ public class DriversMapActivity extends FragmentActivity implements OnMapReadyCa
         googleApiClient.connect();
     }
 
+    //прекращения передачи данных
     @Override
     protected void onStop() {
         super.onStop();
@@ -337,7 +353,7 @@ public class DriversMapActivity extends FragmentActivity implements OnMapReadyCa
         }
 
 
-
+     //выход в главное меню
     private void LogoutDriver()
     {
         Intent welcomeIntent = new Intent(DriversMapActivity.this, WelcomeActivity.class);

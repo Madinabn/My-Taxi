@@ -30,7 +30,7 @@ public class WelcomeActivity extends AppCompatActivity {
         setContentView(R.layout.activity_welcome);
 
         initialize();
-
+     //переход к меню водителя
         driverBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -38,7 +38,7 @@ public class WelcomeActivity extends AppCompatActivity {
                 startActivity(driverIntent);
             }
         });
-
+       //переход к меню клиента
         customerBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -52,6 +52,7 @@ public class WelcomeActivity extends AppCompatActivity {
         }
     }
 
+    // автоматический вход
     private void openMap() {
         databaseReference.child("Customers").addValueEventListener(new ValueEventListener() {
             @Override

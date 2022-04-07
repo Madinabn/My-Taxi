@@ -120,6 +120,8 @@ public class CustomersMapActivity extends FragmentActivity implements OnMapReady
             }
         });
 
+
+        //выход из аккаунта
         customerLogoutButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -128,6 +130,9 @@ public class CustomersMapActivity extends FragmentActivity implements OnMapReady
             }
         });
 
+
+        //при нажатии на кнопку будет передаваться гео клиента в firebase
+        //вызов и отмена
         callTaxiButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v)
@@ -135,6 +140,20 @@ public class CustomersMapActivity extends FragmentActivity implements OnMapReady
                 if (requestType)
                 {
                     requestType = false;
+
+                    if (driverFound!=null)
+                    {
+                        DriversRef = FirebaseDatabase.getInstance().getReference()
+                                .child("Users").child("Drivers").child(driverFoundID).child("CustomerRideID");
+
+                        DriversRef.removeValue();
+
+                        driverFoundID = null;
+                    }
+
+                    driverFound = false;
+                    radius = 1;
+
                     GeoFire geofire = new GeoFire(CustomerDatabaseRef);
                     geofire.removeLocation(customerID);
 
@@ -148,18 +167,8 @@ public class CustomersMapActivity extends FragmentActivity implements OnMapReady
                     }
 
                     callTaxiButton.setText("Вызвать такси");
-                    if (driverFound!=null)
-                    {
-                        DriversRef = FirebaseDatabase.getInstance().getReference()
-                                .child("Users").child("Drivers").child(driverFoundID).child("CustomerRideID");
 
-                        DriversRef.removeValue();
 
-                        driverFoundID = null;
-                    }
-
-                    driverFound = false;
-                    radius = 1;
 
 
                 }
@@ -181,7 +190,7 @@ public class CustomersMapActivity extends FragmentActivity implements OnMapReady
         });
     }
 
-
+    //при запуске показываем гео клиента
     @Override
     public void onMapReady(GoogleMap googleMap)
     {
@@ -194,6 +203,8 @@ public class CustomersMapActivity extends FragmentActivity implements OnMapReady
         mMap.setMyLocationEnabled(true);
     }
 
+
+    //запрос местоположения
     @Override
     public void onConnected(@Nullable Bundle bundle)
     {
@@ -218,6 +229,7 @@ public class CustomersMapActivity extends FragmentActivity implements OnMapReady
 
     }
 
+    //отправка данных гео в firebase
     @Override
     public void onLocationChanged(Location location)
     {
@@ -225,7 +237,7 @@ public class CustomersMapActivity extends FragmentActivity implements OnMapReady
 
         LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
         mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
-        mMap.animateCamera(CameraUpdateFactory.zoomTo(15));
+        mMap.animateCamera(CameraUpdateFactory.zoomTo(12));
     }
     protected synchronized void buildGoogleApiClient()
     {
@@ -238,24 +250,30 @@ public class CustomersMapActivity extends FragmentActivity implements OnMapReady
         googleApiClient.connect();
     }
 
+
+    //прекращения передачи данных
     @Override
     protected void onStop() {
         super.onStop();
     }
 
+    //выход в главное меню
     private void LogoutCustomer()
     {
         Intent welcomeIntent = new Intent(CustomersMapActivity.this, WelcomeActivity.class);
         startActivity(welcomeIntent);
         finish();
     }
-
+//поиск водителя поблизости
     private void getNearbyDrivers() {
+
+        //данные водителя
         GeoFire geoFire = new GeoFire(DriversAvailableRef);
         GeoQuery geoQuery = geoFire.queryAtLocation(new GeoLocation(CustomerPosition.latitude, CustomerPosition.longitude), radius);
         geoQuery.removeAllListeners();
 
         geoQuery.addGeoQueryEventListener(new GeoQueryEventListener() {
+            //ключ и гео водителя
             @Override
             public void onKeyEntered(String key, GeoLocation location) {
                 if(!driverFound && requestType)
@@ -263,9 +281,9 @@ public class CustomersMapActivity extends FragmentActivity implements OnMapReady
                     driverFound = true;
                     final String driverFoundID = key;
 
-                    DriversRef = FirebaseDatabase.getInstance().getReference().child("Users").child("Drivers").child(driverFoundID);
+                    DriversRef = FirebaseDatabase.getInstance().getReference().child("Users").child("Drivers").child(driverFoundID);// папки в которых хранится инфа
                     HashMap driverMap = new HashMap();
-                    driverMap.put("CustomerRideID", customerID);
+                    driverMap.put("CustomerRideID", customerID); //id поездки
                     DriversRef.updateChildren(driverMap);
 
                     DriverLocationRefListener = DriversLocationRef.child(driverFoundID).child("l").
@@ -274,9 +292,12 @@ public class CustomersMapActivity extends FragmentActivity implements OnMapReady
                                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                                     if(dataSnapshot.exists() && requestType)
                                     {
+                                        //получение долготы и широты
                                         List<Object> driverLocationMap = (List<Object>) dataSnapshot.getValue();
                                         double locationLat = 0;
                                         double locationLng = 0;
+
+
 
                                         callTaxiButton.setText("Водитель найден");
 
@@ -299,6 +320,8 @@ public class CustomersMapActivity extends FragmentActivity implements OnMapReady
                                                     txtPhone.setText(phone);
                                                     txtCarName.setText(carname);
 
+
+                                                    //звонок водителю
                                                     callDriver.setOnClickListener(new View.OnClickListener() {
                                                         @Override
                                                         public void onClick(View view) {
@@ -331,11 +354,11 @@ public class CustomersMapActivity extends FragmentActivity implements OnMapReady
 
                                         if (driverLocationMap.get(0) != null)
                                         {
-                                            locationLat = Double.parseDouble(driverLocationMap.get(0).toString());
+                                            locationLat = Double.parseDouble(driverLocationMap.get(0).toString()); //долготу превращ в string
                                         }
                                         if (driverLocationMap.get(1) != null)
                                         {
-                                            locationLng = Double.parseDouble(driverLocationMap.get(1).toString());
+                                            locationLng = Double.parseDouble(driverLocationMap.get(1).toString());//широту превращ в string
                                         }
                                         LatLng DriverLatLng = new LatLng(locationLat, locationLng);
 
@@ -344,6 +367,7 @@ public class CustomersMapActivity extends FragmentActivity implements OnMapReady
                                             driverMarker.remove();
                                         }
 
+                                        //определение гео водителя и клиента
                                         Location location1 = new Location("");
                                         location1.setLatitude(CustomerPosition.latitude);
                                         location1.setLongitude(CustomerPosition.longitude);
@@ -352,13 +376,14 @@ public class CustomersMapActivity extends FragmentActivity implements OnMapReady
                                         location2.setLatitude(DriverLatLng.latitude);
                                         location2.setLongitude(DriverLatLng.longitude);
 
+                                        //расстояние м/у клиентом и таксистом
                                         float Distance = location1.distanceTo(location2);
-                                        if(Distance>100)
+                                        if(Distance<50)
                                         {
                                             callTaxiButton.setText("Ваше такси подъезжает");
                                         }
                                         else {
-                                            callTaxiButton.setText("Расстояние до такси" + String.valueOf(Distance));
+                                            callTaxiButton.setText("Расстояние до такси  " + String.valueOf(Distance));
                                         }
 
                                         driverMarker = mMap.addMarker(new MarkerOptions().position(DriverLatLng)
@@ -385,6 +410,7 @@ public class CustomersMapActivity extends FragmentActivity implements OnMapReady
 
             }
 
+            //если водитель не найден увеличим радиус поиска
             @Override
             public void onGeoQueryReady() {
                 if (!driverFound)

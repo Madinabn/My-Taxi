@@ -58,6 +58,7 @@ public class SettingsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
 
+        //от какого экрана перешли
         getType = getIntent().getStringExtra("type");
 
         mAuth = FirebaseAuth.getInstance();
@@ -70,7 +71,7 @@ public class SettingsActivity extends AppCompatActivity {
         phoneET = (EditText) findViewById(R.id.phone);
 
         carET = (EditText) findViewById(R.id.car_name);
-        if(getType.equals("Drivers")){
+        if(getType.equals("Drivers")){ //показ только в настройках водителя
             carET.setVisibility(View.VISIBLE);
         }
 
@@ -78,6 +79,7 @@ public class SettingsActivity extends AppCompatActivity {
         saveBtn = (ImageView)findViewById(R.id.save_button);
         imageChangeBtn = (TextView) findViewById(R.id.change_photo_btn);
 
+        //выход на карту
         closeBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -90,6 +92,8 @@ public class SettingsActivity extends AppCompatActivity {
             }
         });
 
+
+        //проверка на изменение фото перед сохранением
         saveBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -103,12 +107,13 @@ public class SettingsActivity extends AppCompatActivity {
             }
         });
 
+        //сменить фото
         imageChangeBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 checker = "clicked";
 
-                CropImage.activity().setAspectRatio(1,1).start(SettingsActivity.this);
+                CropImage.activity().setAspectRatio(1,1).start(SettingsActivity.this); //обрезка фото
             }
         });
 
@@ -117,6 +122,7 @@ public class SettingsActivity extends AppCompatActivity {
 
 
 
+    //сохр настроек
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -128,7 +134,7 @@ public class SettingsActivity extends AppCompatActivity {
 
             circleImageView.setImageURI(imageUri);
         }else {
-            if (getType.equals("Drivers"))
+            if (getType.equals("Drivers")) //выход на карту
             {
                 startActivity(new Intent(SettingsActivity.this, DriversMapActivity.class));
             }else {
@@ -141,6 +147,7 @@ public class SettingsActivity extends AppCompatActivity {
 
     }
 
+    //сохр настроеек с фото
     private void ValidateControllers()
     {
         if(TextUtils.isEmpty(nameET.getText().toString())){
@@ -158,6 +165,8 @@ public class SettingsActivity extends AppCompatActivity {
         }
     }
 
+
+    //загрузка фото,сохранение
     private void uploadProfileImage() {
         final ProgressDialog progressDialog = new ProgressDialog(this);
         progressDialog.setTitle("Загрузка информации");
@@ -215,6 +224,7 @@ public class SettingsActivity extends AppCompatActivity {
         }
     }
 
+    //изм настроек только инфы, отпрака данных
     private void ValidateAndSaveOnlyInformation() {
         if(TextUtils.isEmpty(nameET.getText().toString())){
             Toast.makeText(this, "Заполните поле имя", Toast.LENGTH_SHORT).show();
@@ -246,7 +256,7 @@ public class SettingsActivity extends AppCompatActivity {
         }
     }
 
-
+//получение измененной настройки из firebase
     private void getUserInformation() {
         databaseReference.child(mAuth.getCurrentUser().getUid()).addValueEventListener(new ValueEventListener() {
             @Override

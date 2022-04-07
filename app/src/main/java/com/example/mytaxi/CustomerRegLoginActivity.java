@@ -51,6 +51,8 @@ public class CustomerRegLoginActivity extends AppCompatActivity {
         signUpBtn.setVisibility(View.INVISIBLE);
         signUpBtn.setEnabled(false);
 
+        //действие при нажатии кнопки "зарегаться"
+        //исчезновение кнопки "войти" и появление кнопки "регистр"
         question.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -63,6 +65,7 @@ public class CustomerRegLoginActivity extends AppCompatActivity {
             }
         });
 
+        //регистрация
         signUpBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -73,6 +76,7 @@ public class CustomerRegLoginActivity extends AppCompatActivity {
             }
         });
 
+        //вход
         signInBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -85,12 +89,15 @@ public class CustomerRegLoginActivity extends AppCompatActivity {
         });
     }
 
+    // метод входа
+    //отправка данных и проверка в firebase
     private void SignInCustomer(String email, String password) {
 
         loadingBar.setTitle("Вход для клиентов");
         loadingBar.setMessage("Пожалуйста, дождитесь загрузки");
         loadingBar.show();
 
+        //вход c email и с паролем
         mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
@@ -99,6 +106,7 @@ public class CustomerRegLoginActivity extends AppCompatActivity {
                     Toast.makeText(CustomerRegLoginActivity.this, "Успешный вход.", Toast.LENGTH_SHORT).show();
                     loadingBar.dismiss();
 
+                    //переход в карту клиента
                     Intent customerIntent = new Intent(CustomerRegLoginActivity.this, CustomersMapActivity.class);
                     startActivity(customerIntent);
                 }
@@ -111,22 +119,29 @@ public class CustomerRegLoginActivity extends AppCompatActivity {
         });
     }
 
+
+    // метод регистрации
+    //отправка данных в firebase
     private void RegisterCustomer(String email, String password)
     {
         loadingBar.setTitle("Регистрация клиента");
         loadingBar.setMessage("Пожалуйста, дождитесь загрузки");
         loadingBar.show();
 
+        //регистрация c email и с паролем
         mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if(task.isSuccessful())
                 {
+
+                    //запись в firebase  в папку customers
                     OnlineCustomerID = mAuth.getCurrentUser().getUid();
                     CustomerDatabaseRef = FirebaseDatabase.getInstance().getReference()
                             .child("Users").child("Customers").child(OnlineCustomerID);
                     CustomerDatabaseRef.setValue(true);
 
+                    //переход в карту клиента
                     Intent customerIntent = new Intent(CustomerRegLoginActivity.this, CustomersMapActivity.class);
                     startActivity(customerIntent);
 

@@ -52,6 +52,8 @@ public class DriverRegLoginActivity extends AppCompatActivity {
         signUpBtn.setVisibility(View.INVISIBLE);
         signUpBtn.setEnabled(false);
 
+        //действие при нажатии кнопки "зарегаться"
+        //исчезновение кнопки "войти" и появление кнопки "регистр"
         question.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -64,6 +66,7 @@ public class DriverRegLoginActivity extends AppCompatActivity {
             }
         });
 
+        //регистрация
         signUpBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -74,6 +77,7 @@ public class DriverRegLoginActivity extends AppCompatActivity {
             }
         });
 
+        //вход
         signInBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -87,12 +91,15 @@ public class DriverRegLoginActivity extends AppCompatActivity {
 
     }
 
+    // метод входа
+    //отправка данных и проверка в firebase
     private void SignInDriver(String email, String password)
     {
         loadingBar.setTitle("Вход водителя");
         loadingBar.setMessage("Пожалуйста, дождитесь загрузки");
         loadingBar.show();
 
+        //вход c email и с паролем
         mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
@@ -100,6 +107,8 @@ public class DriverRegLoginActivity extends AppCompatActivity {
                 {
                     Toast.makeText(DriverRegLoginActivity.this, "Успешный вход.", Toast.LENGTH_SHORT).show();
                     loadingBar.dismiss();
+
+                    //переход в карту водителя
                     Intent driverIntent = new Intent(DriverRegLoginActivity.this, DriversMapActivity.class);
                     startActivity(driverIntent);
                 }
@@ -111,23 +120,28 @@ public class DriverRegLoginActivity extends AppCompatActivity {
             }
         });
     }
-
+    // метод регистрации
+    //отправка данных в firebase
     private void RegisterDriver(String email, String password)
     {
         loadingBar.setTitle("Регистрация водителя");
         loadingBar.setMessage("Пожалуйста, дождитесь загрузки");
         loadingBar.show();
 
+        //регистрация c email и с паролем
         mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if(task.isSuccessful())
                 {
+
+                    //запись в firebase в папку drivers
                     OnlineDriverID = mAuth.getCurrentUser().getUid();
                     DriverDatabaseRef = FirebaseDatabase.getInstance().getReference()
                             .child("Users").child("Drivers").child(OnlineDriverID);
                     DriverDatabaseRef.setValue(true);
 
+                    //переход в карту водителя
                     Intent driverIntent = new Intent(DriverRegLoginActivity.this, DriversMapActivity.class);
                     startActivity(driverIntent);
 

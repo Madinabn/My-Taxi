@@ -9,17 +9,20 @@
     <fragment
         android:id="@+id/map"
         android:name="com.google.android.gms.maps.SupportMapFragment"
-        android:layout_marginTop="50dp"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:layout_marginTop="50dp" />
 
     <RelativeLayout
         android:id="@+id/rel1"
-        android:background="#F9C663"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="10dp"
-        android:layout_above="@+id/cuslomer_order_button">
+        android:layout_above="@+id/cuslomer_order_button"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="10dp"
+        android:background="#FFFEFB">
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/driver_photo"
@@ -33,50 +36,50 @@
             android:id="@+id/driver_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="15dp"
+            android:layout_marginTop="10dp"
             android:layout_toEndOf="@+id/driver_photo"
             android:text="Имя водителя"
-            android:textColor="@android:color/white"
-            android:layout_marginTop="10dp"
-            android:layout_marginLeft="15dp"
-            android:textSize="16sp"
-            />
+            android:textColor="@android:color/black"
+            android:textSize="16sp" />
 
         <TextView
             android:id="@+id/driver_phone_number"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_below="@+id/driver_name"
+            android:layout_marginLeft="15dp"
+            android:layout_marginTop="10dp"
             android:layout_toEndOf="@+id/driver_photo"
             android:text="Номер телефона"
-            android:layout_below="@+id/driver_name"
-            android:textColor="@android:color/white"
-            android:layout_marginTop="10dp"
-            android:layout_marginLeft="15dp"
-            android:textSize="16sp"
-            />
+            android:textColor="@android:color/black"
+            android:textSize="16sp" />
 
         <TextView
             android:id="@+id/driver_car"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_below="@+id/driver_phone_number"
+            android:layout_marginLeft="15dp"
+            android:layout_marginTop="10dp"
             android:layout_toEndOf="@+id/driver_photo"
             android:text="Марка автомобиля"
-            android:layout_below="@+id/driver_phone_number"
-            android:textColor="@android:color/white"
-            android:layout_marginTop="10dp"
-            android:layout_marginLeft="15dp"
-            android:textSize="16sp"
-            />
+            android:textColor="@android:color/black"
+            android:textSize="16sp" />
 
         <ImageView
             android:id="@+id/call_to_driver"
             android:layout_width="50dp"
             android:layout_height="50dp"
+            android:layout_alignStart="@+id/driver_photo"
+            android:layout_alignParentTop="true"
             android:layout_alignParentEnd="true"
-            android:src="@drawable/phone"
-            android:layout_centerVertical="true"
+            android:layout_marginStart="288dp"
+            android:layout_marginTop="13dp"
+            android:layout_marginEnd="11dp"
             android:layout_marginRight="10dp"
-            android:tint="@android:color/white"
-            />
+            android:src="@drawable/phone"
+            android:tint="@android:color/black" />
 
     </RelativeLayout>
 
@@ -102,10 +105,11 @@
         android:id="@+id/cuslomer_order_button"
         android:layout_width="match_parent"
         android:layout_height="50dp"
+        android:layout_alignParentBottom="true"
+        android:background="#F9C663"
         android:text="Вызвать такси"
-        android:background="#FF9800"
-        android:textColor="@android:color/white"
-        android:layout_alignParentBottom="true"/>
+        android:textColor="@android:color/black" />
+
 
 </RelativeLayout>
 
